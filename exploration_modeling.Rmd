@@ -2,7 +2,7 @@
 title: "Modeling Social Data Project"
 author: "Aarshay Jain | Bindia Kalra | Keerti Agrawal"
 date: "May 5, 2017"
-output: html_document
+output: github_document
 ---
 
 ---
@@ -35,11 +35,19 @@ head(df[features])
 ```{r}
 apply(df[c(features,outcomes)],2,function(x) sum(is.na(x)))
 ```
-summary:
+The summary shows everything looks good.
 ```{r}
 summary(df[c(features,outcomes)])
 ```
-```{r}
-
+Grit and GPA histograms:
+```{r,fig.show='hold',fig.align='center'}
+hist(df$grit)
+hist(df$gpa)
 ```
+Get correlation coefficients:
 
+Though small magnitudes, we see -ve correlation in num_cidi_cases, num_partners and kid_punished and +ve otherwise as expected.
+```{r}
+apply(df[features[3:length(features)]],2,function(x) cor(x,y=df$gpa))
+```
+g

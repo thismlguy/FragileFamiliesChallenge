@@ -1,0 +1,45 @@
+---
+title: "Modeling Social Data Project"
+author: "Aarshay Jain | Bindia Kalra | Keerti Agrawal"
+date: "May 5, 2017"
+output: html_document
+---
+
+---
+First we read the data and define the names of new variables created, which are:
+
+Explanatory:
+* father_involvement
+* father_presence
+* num_partners
+* num_cohab_biof
+* num_cohab_anyp
+
+Control:
+* mothers_education
+* fathers_education
+* num_cidi_cases
+* hh_income
+* kid_punished
+
+
+```{r}
+df <- read.csv('FFChallenge/final_data.csv',header = T, stringsAsFactors = T)
+features <- c('father_involvement', 'father_presence', 'num_partners', 'num_cohab_biof', 'num_cohab_anyp','mothers_education', 'fathers_education', 'num_cidi_cases', 'hh_income', 'kid_punished')
+outcomes <- c('gpa', 'grit')
+head(df[features])
+```
+
+# Data Checks:
+* missin values
+```{r}
+apply(df[c(features,outcomes)],2,function(x) sum(is.na(x)))
+```
+summary:
+```{r}
+summary(df[c(features,outcomes)])
+```
+```{r}
+
+```
+

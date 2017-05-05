@@ -26,6 +26,7 @@ The FFChallenge folder should have the data which came from the zip file shared 
 
 
 # Core Contributors:
-[Aarshay Jain](https://github.com/aarshayj)
-[Keerti Agrawal](https://github.com/ka2601)
-[Bindia Kalra](https://github.com/bkalra23)
+
+* [Aarshay Jain](https://github.com/aarshayj)
+* [Keerti Agrawal](https://github.com/ka2601)
+* [Bindia Kalra](https://github.com/bkalra23)

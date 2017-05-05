@@ -6,7 +6,7 @@ This study used the [FragileFamiliesChallenge](http://fragilefamilieschallenge.o
 Please refer the following files for details of the work done:
 
 1. Final Report
-  - This is present in the "Final_Report.pdf" document
+  - This is present in the **Final_Report.pdf** document
 
 2. Code to reproduce the results
   - Both Python and R were used to do the analysis. The sequence of codes to run are:
@@ -16,11 +16,16 @@ Please refer the following files for details of the work done:
 
 3. Data Dictionary:
   - Another contribution to the project was a data dictionary of the 600 constructed variables. 
-  - This is present in "FFC_Data_Dictionary.xlsx" which is a MS Excel file with clear instructions on how to read the dictionary.
+  - This is present in **FFC_Data_Dictionary.xlsx** which is a MS Excel file with clear instructions on how to read the dictionary.
 
 4. Final Presentation
-  - The final deck presented is available in the "Final_Presentation.pdf" file.
+  - The final deck presented is available in the **Final_Presentation.pdf** file.
 
 *Important Note:*
 The FFChallenge folder should have the data which came from the zip file shared by the FFChallenge organizers. 
 
+
+# Core Contributors:
+[Aarshay Jain](https://github.com/aarshayj)
+[Keerti Agrawal](https://github.com/ka2601)
+[Bindia Kalra](https://github.com/bkalra23)

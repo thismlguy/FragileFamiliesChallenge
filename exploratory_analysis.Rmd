@@ -1,0 +1,184 @@
+---
+title: "Modeling Social Data Project"
+author: "Aarshay Jain | Bindia Kalra | Keerti Agrawal"
+date: "May 5, 2017"
+output: html_document
+---
+
+First we read the data and define the names of new variables created, which are:
+
+Explanatory:
+* father_involvement
+* father_presence
+* num_partners
+* num_cohab_biof
+* num_cohab_anyp
+
+Control:
+* mothers_education
+* fathers_education
+* num_cidi_cases
+* hh_income
+* kid_punished
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(stargazer)
+```
+
+
+```{r}
+df <- read.csv('FFChallenge/final_data.csv',header = T, stringsAsFactors = F)
+features <- c('father_involvement', 'father_presence', 'num_partners', 'num_cohab_biof', 'num_cohab_anyp','mothers_education', 'fathers_education', 'num_cidi_cases', 'hh_income', 'kid_punished')
+outcomes <- c('gpa', 'grit')
+head(df[features])
+```
+#Recode factors in a logical sequence:
+```{r}
+df$father_involvement <- factor(df$father_involvement, levels=c("low","medium","high") )
+df$father_presence <- factor(df$father_presence, levels=c("low","medium","high"))
+```
+
+
+# Data Checks:
+* missin values
+```{r}
+apply(df[c(features,outcomes)],2,function(x) sum(is.na(x)))
+```
+The summary shows everything looks good.
+```{r}
+summary(df[c(features,outcomes)])
+```
+Grit and GPA histograms:
+```{r,fig.show='hold',fig.align='center'}
+# hist(df$grit)
+ggplot(data=df)+
+  geom_histogram(aes(x=gpa),bins=10, fill="maroon")+
+  xlab("GPA at Age 15") +
+  ylab("Count")+
+  ggtitle("Histogram of GPA") + theme(plot.title = element_text(hjust = 0.5))
+```
+Get correlation coefficients:
+
+Correaltion between gpa and grit:
+```{r}
+cor(df$gpa,df$grit)
+```
+
+Though small magnitudes, we see -ve correlation in num_cidi_cases, num_partners and kid_punished and +ve otherwise as expected.
+```{r}
+print('Correlation with GPA:')
+apply(df[features[3:length(features)]],2,function(x) cor(x,y=df$gpa))
+print('Correlation with Grit:')
+apply(df[features[3:length(features)]],2,function(x) cor(x,y=df$grit))
+```
+
+Make bar chart for father's involvement and presence:
+```{r}
+plot1 <- ggplot(data=df) +
+  geom_bar(aes(x=father_involvement)) +
+  ylab("Count")
+ plot2 <- ggplot(data=df) +
+  geom_boxplot(aes(x=father_involvement, y=gpa)) +
+   ylab("GPA at Age 15")
+grid.arrange(plot1, plot2, ncol=2, top="Father's Involvement Feature")
+```
+Tabulate presence and involvement:
+```{r}
+table(df$father_involvement, df$father_presence)
+```
+
+
+Make boxplots for father's involvement:
+```{r}
+plot1 <- ggplot(data=df) +
+  geom_bar(aes(x=father_presence)) +
+  ylab("Count")
+ plot2 <- ggplot(data=df) +
+  geom_boxplot(aes(x=father_presence, y=gpa)) +
+   ylab("GPA at Age 15")
+grid.arrange(plot1, plot2, ncol=2, top="Father's Presence Feature")
+```
+Though the boxplots are highly overlapping, we can see that father's involvement has a slightly positive impact on GPA. Probably there are many confounding factors which we'll take into consideration in the linear models.
+
+Run a 2-sample t-test:
+```{r}
+fit <- aov(gpa~father_involvement,data=df)
+summary(fit)
+fit <- aov(gpa~father_presence,data=df)
+summary(fit)
+# plot(fit)
+# TukeyHSD(fit)
+```
+Anove gives a highly significant result because it tests that the 3 means are equal. But its a good to compare pairs as well to see which one is actually different. As shown by the boxplot, out hypothesis is confirmed that 
+
+Make boxplots for father's involvement on grit:
+```{r}
+plot1 <- ggplot(data=df) +
+  geom_boxplot(aes(x=father_involvement, y=grit)) 
+plot2 <- ggplot(data=df) +
+  geom_boxplot(aes(x=father_presence, y=grit)) 
+grid.arrange(plot1, plot2, ncol=2)
+```
+
+plot others
+```{r}
+plot1 <- ggplot(data=df) +
+  geom_bar(aes(x=num_cohab_biof)) +
+  ylab("Count") + xlab("#Cohabiting with Biological Father")
+plot2 <- ggplot(data=df) +
+  geom_bar(aes(x=num_cohab_anyp)) +
+  ylab("Count") + xlab("#Cohabiting with Any Partner")
+grid.arrange(plot1, plot2, ncol=2, top="Presence of a Fatherly Figure")
+```
+
+```{r}
+ggplot(data=df) +
+  geom_bar(aes(x=num_partners)) +
+  ylab("Count") + xlab("#Number of Relationships With Partners Other than Father")
+```
+
+
+# Linear Models:
+we'll start with father's presence and then keep adding new variables in the model:
+
+```{r}
+lm1 <- lm(gpa~father_presence,data=df)
+# summary(lm1)
+lm2 <- lm(gpa~num_cohab_biof+father_presence,data=df)
+# summary(lm2)
+stargazer(lm1,lm2,type="text",report = "vcp*",intercept.bottom = F, omit.stat=c("adj.rsq","ser","f"))
+```
+lm2 shows that father_presence is not important in presence of num_cohab_biof which is also a proxy for the same. so we'll just keep one of them.
+```{r}
+lm3 <- lm(gpa~num_cohab_biof + father_presence  + father_involvement, data=df)
+lm4 <- lm(gpa~num_cohab_biof + father_involvement, data=df)
+stargazer(lm2,lm3,lm4,type="text",report = "vcp*",intercept.bottom = F, omit.stat=c("adj.rsq","ser","f"))
+```
+Add more:
+```{r}
+df$num_cohab_anyp2 <- df$num_cohab_anyp - df$num_cohab_biof
+lm5 <- lm(gpa~num_cohab_biof + father_involvement + num_cohab_anyp2, data=df)
+stargazer(lm4,lm5,type="text",report = "vcp*",intercept.bottom = F, omit.stat=c("adj.rsq","ser","f"))
+```
+```{r}
+lm6 <- lm(gpa~num_cohab_biof + father_involvement + num_cohab_anyp + num_partners, data=df)
+stargazer(lm5,lm6,type="text",report = "vcp*",intercept.bottom = F, omit.stat=c("adj.rsq","ser","f"))
+```
+
+
+```{r}
+# lm6 <- lm(gpa~mothers_education+fathers_education+num_cidi_cases+ hh_income+kid_punished,data=df)
+# summary(lm6)
+lm7 <- lm(gpa~num_cohab_biof + father_involvement + num_cohab_anyp + num_partners +
+            mothers_education+fathers_education+num_cidi_cases+ hh_income+kid_punished, data=df)
+stargazer(lm6,lm7,type="text",report = "vcp*",intercept.bottom = F, omit.stat=c("adj.rsq","ser","f"))
+```
+```{r}
+lm8 <- lm(gpa~num_cohab_biof + father_involvement + num_cohab_anyp + num_partners +
+            mothers_education+fathers_education+ hh_income, data=df)
+stargazer(lm7,lm8,type="text",report = "vcp*",intercept.bottom = F, omit.stat=c("adj.rsq","ser","f"))
+```
+

@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Impact of Absent Father on Child’s Education 
 Columbia University Applied Mathematics (APMAE4990) Modeling Social Data Class Project
 
@@ -30,3 +32,5 @@ The FFChallenge folder should have the data which came from the zip file shared 
 * [Aarshay Jain](https://github.com/aarshayj)
 * [Keerti Agrawal](https://github.com/ka2601)
 * [Bindia Kalra](https://github.com/bkalra23)
+
+The project is open-sourced under [MIT License](https://en.wikipedia.org/wiki/MIT_License).
